@@ -1,7 +1,26 @@
 
-const imgs = document.querySelectorAll('.holder img');
-console.log(random(imgs.length));
+// The file-path of the executing code
+const scripts = document.getElementsByTagName("script");
+const src = scripts[scripts.length - 1].src.split('script')[0];
 
+const imgs = document.querySelectorAll('.holder img');
+console.log((placeImagesRandom()));
+
+
+
+
+// Placing the images in random places
+function placeImagesRandom() {
+
+    const randomArray = random(imgs.length);
+    let i = 0;
+    imgs.forEach(img => {
+
+        img.src = `${src}Pics/${randomArray[i] + 1}.jpg`;
+        i++;
+
+    });
+}
 
 // Making array with random unrepeated values
 function random(length) {
