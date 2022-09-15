@@ -1,10 +1,70 @@
-
+const allPuzzles = ['silance', 'pearl', 'monalisa'];
+let puzzleFolder;
 // The file-path of the executing code
 const scripts = document.getElementsByTagName("script");
 const src = scripts[scripts.length - 1].src.split('script')[0];
 
 const imgs = document.querySelectorAll('.holder img');
-console.log((placeImagesRandom()));
+let draggedImg;
+let dorpTarget;
+let emptySquare = `${src}Pics/empty.jpg`;
+
+
+const holders = document.getElementsByClassName('holder');
+const board = document.querySelector('.board');
+
+// Functionalities of the game, dragging images and placing it
+[...holders, board].forEach(container => {
+
+    container.addEventListener('dragstart', (e) => {
+        draggedImg = e.target;
+    });
+    container.addEventListener('dragover', (e) => {
+        // The default behaviour does not allow to drop the items
+        dorpTarget = e.target;
+        e.preventDefault();
+    });
+    container.addEventListener('drop', (e) => {
+        // if (draggedImg.src !== emptySquare) {
+
+        //     let temp;
+        //     emptyPlace = e.target;
+        //     temp = dorpTarget.src
+        //     dorpTarget.src = draggedImg.src;
+        //     draggedImg.src = temp;
+        // }
+
+        if (dorpTarget.src === emptySquare) {
+            dorpTarget.src = draggedImg.src;
+            draggedImg.src = emptySquare;
+        }
+    });
+});
+
+// let start = performance.now();
+// console.log(random(imgs.length));
+// let end = performance.now();
+// console.log(`${end - start} milliseconds`);
+
+const submitBtn = document.querySelector('.submit');
+
+submitBtn.addEventListener('click', (e) => {
+    // Getting username
+    const userName = document.querySelector('#user-name').value;
+
+    // Getting the puzzle
+    const choosenPuzzle = document.querySelector('select').value;
+    puzzleFolder = allPuzzles[choosenPuzzle];
+
+
+    // Deleting the form 
+    const startGame = document.querySelector('.start-game');
+    startGame.remove();
+
+    placeImagesRandom();
+    e.preventDefault();
+
+});
 
 
 
@@ -16,7 +76,7 @@ function placeImagesRandom() {
     let i = 0;
     imgs.forEach(img => {
 
-        img.src = `${src}Pics/${randomArray[i] + 1}.jpg`;
+        img.src = `${src}Pics/${puzzleFolder}/${randomArray[i] + 1}.jpg`;
         i++;
 
     });
