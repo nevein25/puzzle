@@ -37,7 +37,20 @@ body {
     box-shadow: 14px 14px 20px #cbced1;
     border-radius: 10px;
 }
-
+.game-data{
+    background-color: aliceblue;
+    width: 70%;
+    height: 40px;
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+    align-items: center;
+    font-size: 20px;
+    position: fixed;
+    left: 50%;
+    top: 10vh;
+    transform: translate(-50%, -50%);
+}
 .start-game form .data {
     width: 90%;
     position: relative;
