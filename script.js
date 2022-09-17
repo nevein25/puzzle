@@ -4,7 +4,7 @@ let puzzleFolder;
 const scripts = document.getElementsByTagName("script");
 const src = scripts[scripts.length - 1].src.split('script')[0];
 
-const imgs = document.querySelectorAll('.holder img');
+
 let draggedImg;
 let dorpTarget;
 let emptySquare = `${src}Pics/empty.jpg`;
@@ -49,29 +49,68 @@ const board = document.querySelector('.board');
 const submitBtn = document.querySelector('.submit');
 
 submitBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
     // Getting username
     const userName = document.querySelector('#user-name').value;
-
     // Getting the puzzle
-    const choosenPuzzle = document.querySelector('select').value;
+    const choosenPuzzle = document.querySelector('#puzzle').value;
+    // Getting the level
+    const level = document.querySelector('#level').value;
+
+    // Setting the puzzle
     puzzleFolder = allPuzzles[choosenPuzzle];
+    placeImagesRandom();
+
+    // Setting userName
+    document.querySelector('.user-name-enterd').innerText = userName;
+
+    // Setting difficulty of the game based on time, level will act as minutes
+    timer(level);
 
 
     // Deleting the form 
     const startGame = document.querySelector('.start-game');
     startGame.remove();
 
-    placeImagesRandom();
-    e.preventDefault();
 
 });
 
 
 
 
+function timer(level) {
+    let seconds = 4;
+    let minutes = parseInt(level)
+    
+    const minutesElement = document.querySelector('.minutes');
+    const secondsElement = document.querySelector('.seconds');
+
+    let intervalId = setInterval(() => {
+        if (minutes === 0 && seconds === 0) {
+            // TODO: if time = 0 or user won clear the interval
+            clearInterval(intervalId);
+            console.log('end game');
+
+        }
+        else if (seconds === 0 && minutes !== 0) {
+            seconds = 10;
+            minutes--;
+        }
+        else {
+            seconds--;
+            minutesElement.innerText = minutes < 10 ? `0${minutes}` : minutes;
+            secondsElement.innerText = seconds < 10 ? `0${seconds}` : seconds;
+            // console.log(`${minutes} : ${seconds}`);
+        }
+    }, 100);
+}
+
+
+
 // Placing the images in random places
 function placeImagesRandom() {
-
+    const imgs = document.querySelectorAll('.holder img');
     const randomArray = random(imgs.length);
     let i = 0;
     imgs.forEach(img => {
