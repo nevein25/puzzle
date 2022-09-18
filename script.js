@@ -1,9 +1,11 @@
 const allPuzzles = ['silance', 'pearl', 'monalisa'];
 let puzzleFolder;
 // The file-path of the executing code
-const scripts = document.getElementsByTagName("script");
-const src = scripts[scripts.length - 1].src.split('script')[0];
+const script = document.querySelector("script");
+const src = script.src.split('script')[0];
 
+let timeIsUp = false;
+let ImgsPlace = [];
 
 let draggedImg;
 let dorpTarget;
@@ -25,27 +27,95 @@ const board = document.querySelector('.board');
         e.preventDefault();
     });
     container.addEventListener('drop', (e) => {
-        // if (draggedImg.src !== emptySquare) {
 
-        //     let temp;
-        //     emptyPlace = e.target;
-        //     temp = dorpTarget.src
-        //     dorpTarget.src = draggedImg.src;
-        //     draggedImg.src = temp;
-        // }
-
+        // Putting the img in the empty square
         if (dorpTarget.src === emptySquare) {
             dorpTarget.src = draggedImg.src;
             draggedImg.src = emptySquare;
         }
+
+        // TODO: tracking images places
+        trackImages();
+        // console.log(isEmptySquares());
+        console.log(timeIsUp);
+        // if (timeIsUp || !isEmptySquares()) {
+        //     console.log('inside the condition');
+        //     console.log(something());
+        // }
+        
+        // trackImages()
     });
 });
+
+// function isEmptySquares() {
+//     const allImgs = document.querySelectorAll('.board img');
+
+//     let isEmpty = false;
+//     // extract img name from img src
+//     for (let i = 0; i < allImgs.length; i++) {
+//         let ImgPlace = allImgs[i].src.split('Pics/')[1].split('.jpg')[0].split('/')[1];
+//         ImgsPlace[i] = parseInt(ImgPlace);
+//         // if there is still empty squares break
+//         if (isNaN(ImgsPlace[i])) {
+//             isEmpty = true;
+//             break;
+//         }
+//     }
+//     return isEmpty;
+// }
+
+
+// function something() {
+
+//     let inRightPlace = 0;
+//     console.log(ImgsPlace);
+//     for (let i = 0; i < ImgsPlace.length; i++) {
+//         if (ImgsPlace[i] === (i + 1)) {
+//             inRightPlace++
+//         }
+
+//     }
+//     return inRightPlace;
+
+// }
+function trackImages() {
+    let empty = false;
+    const allImgs = document.querySelectorAll('.board img');
+    const ImgsPlace = []
+    // extract img name from img src
+    for (let i = 0; i < allImgs.length; i++) {
+        let ImgPlace = allImgs[i].src.split('Pics/')[1].split('.jpg')[0].split('/')[1];
+        ImgsPlace[i] = parseInt(ImgPlace);
+
+        // TODO: if there is still empty squares & time is not up break
+        if (isNaN(ImgsPlace[i])) {
+            console.log('break');
+            empty = true;
+            break;
+        }
+    }
+
+    // if not empty count score, if time === 00:00 count score
+    let inRightPlace = 0;
+    if (!empty || timeIsUp) {
+        console.log('inside new');
+        for (let i = 0; i < ImgsPlace.length; i++) {
+            if (ImgsPlace[i] === (i + 1)) {
+                inRightPlace++
+            }
+            // console.log(inRightPlace);
+        }
+    }
+    // console.log(ImgsPlace);
+}
 
 // let start = performance.now();
 // console.log(random(imgs.length));
 // let end = performance.now();
 // console.log(`${end - start} milliseconds`);
 
+
+// Getting data from the user and setting game enviroment
 const submitBtn = document.querySelector('.submit');
 
 submitBtn.addEventListener('click', (e) => {
@@ -78,18 +148,19 @@ submitBtn.addEventListener('click', (e) => {
 
 
 
-
+// Timer based on level
 function timer(level) {
-    let seconds = 4;
-    let minutes = parseInt(level)
-    
+    let seconds = 59;
+    let minutes = parseInt(level);
+
     const minutesElement = document.querySelector('.minutes');
     const secondsElement = document.querySelector('.seconds');
 
     let intervalId = setInterval(() => {
         if (minutes === 0 && seconds === 0) {
-            // TODO: if time = 0 or user won clear the interval
+            // TODO: if user won clear the interval
             clearInterval(intervalId);
+            timeIsUp = true;
             console.log('end game');
 
         }
