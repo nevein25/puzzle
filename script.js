@@ -1,9 +1,13 @@
-const allPuzzles = ['silance', 'pearl', 'monalisa'];
 let puzzleFolder;
+const allPuzzles = ['silance', 'pearl', 'monalisa'];
+
 // The file-path of the executing code
 const script = document.querySelector("script");
 const src = script.src.split('script')[0];
-
+let foundScore;
+let level;
+let timeSpentInSec = 0;
+let score = 0;
 let timeIsUp = false;
 let ImgsPlace = [];
 
@@ -11,9 +15,16 @@ let draggedImg;
 let dorpTarget;
 let emptySquare = `${src}Pics/empty.jpg`;
 
+let userName;
 
 const holders = document.getElementsByClassName('holder');
 const board = document.querySelector('.board');
+
+function saveData(name) {
+    // localStorage.setItem(name,'nev');
+}
+//  localStorage.setItem('nev',20);
+//  localStorage.setItem('neveen',500);
 
 // Functionalities of the game, dragging images and placing it
 [...holders, board].forEach(container => {
@@ -34,87 +45,60 @@ const board = document.querySelector('.board');
             draggedImg.src = emptySquare;
         }
 
-        // TODO: tracking images places
-        trackImages();
-        // console.log(isEmptySquares());
-        console.log(timeIsUp);
-        // if (timeIsUp || !isEmptySquares()) {
-        //     console.log('inside the condition');
-        //     console.log(something());
-        // }
-        
-        // trackImages()
     });
 });
 
-// function isEmptySquares() {
-//     const allImgs = document.querySelectorAll('.board img');
 
-//     let isEmpty = false;
-//     // extract img name from img src
-//     for (let i = 0; i < allImgs.length; i++) {
-//         let ImgPlace = allImgs[i].src.split('Pics/')[1].split('.jpg')[0].split('/')[1];
-//         ImgsPlace[i] = parseInt(ImgPlace);
-//         // if there is still empty squares break
-//         if (isNaN(ImgsPlace[i])) {
-//             isEmpty = true;
-//             break;
-//         }
-//     }
-//     return isEmpty;
-// }
+function endGameSetUp() {
+    const scripTag = document.getElementsByTagName('script')[0];
 
+    const parentDiv = document.createElement('div');
+    parentDiv.classList.add('end-game');
 
-// function something() {
+    const childDiv = document.createElement('div');
+    childDiv.classList.add('message')
 
-//     let inRightPlace = 0;
-//     console.log(ImgsPlace);
-//     for (let i = 0; i < ImgsPlace.length; i++) {
-//         if (ImgsPlace[i] === (i + 1)) {
-//             inRightPlace++
-//         }
+    parentDiv.appendChild(childDiv);
+    document.body.insertBefore(parentDiv, scripTag);
+    /*
+            <div class="message">
+            <p class="cur-score">Your Score In This Game: 15</p>
+            <p class="heigh-score">Your highest Score Is: 15</p>
+            <button id="play-again">Play Again?</button>
+        </div>
+    */
+    const p1 = document.createElement('p');
+    p1.classList.add('cur-score');
+    p1.innerText = `Your Score In This Game: ${score}`;
 
-//     }
-//     return inRightPlace;
+    const p2 = document.createElement('p');
+    p2.classList.add('heigh-score');
+    p2.innerText = `Your highest Score Is: ${localStorage.getItem(userName)}`;
 
-// }
-function trackImages() {
-    let empty = false;
-    const allImgs = document.querySelectorAll('.board img');
-    const ImgsPlace = []
-    // extract img name from img src
-    for (let i = 0; i < allImgs.length; i++) {
-        let ImgPlace = allImgs[i].src.split('Pics/')[1].split('.jpg')[0].split('/')[1];
-        ImgsPlace[i] = parseInt(ImgPlace);
+    const btnPlayAgain = document.createElement('button');
+    btnPlayAgain.setAttribute('id', 'play-again');
+    btnPlayAgain.innerText = 'Play Again?';
 
-        // TODO: if there is still empty squares & time is not up break
-        if (isNaN(ImgsPlace[i])) {
-            console.log('break');
-            empty = true;
-            break;
-        }
-    }
+    const messageEle = document.querySelector('.message');
+    messageEle.appendChild(p1);
+    messageEle.appendChild(p2);
+    messageEle.appendChild(btnPlayAgain);
 
-    // if not empty count score, if time === 00:00 count score
-    let inRightPlace = 0;
-    if (!empty || timeIsUp) {
-        console.log('inside new');
-        for (let i = 0; i < ImgsPlace.length; i++) {
-            if (ImgsPlace[i] === (i + 1)) {
-                inRightPlace++
-            }
-            // console.log(inRightPlace);
-        }
-    }
-    // console.log(ImgsPlace);
+    btnPlayAgain.addEventListener('click',() =>location.reload());
 }
+// var testObject = { 'score': score = [1,2,3] };
+// localStorage.setItem('neveen', 210);
 
+// Retrieve the object from storage
+// var retrievedObject = localStorage.getItem('testObject');
+
+// console.log('retrievedObject: ', JSON.parse(retrievedObject));
 // let start = performance.now();
 // console.log(random(imgs.length));
 // let end = performance.now();
 // console.log(`${end - start} milliseconds`);
 
-
+console.log(localStorage.getItem(userName));
 // Getting data from the user and setting game enviroment
 const submitBtn = document.querySelector('.submit');
 
@@ -122,11 +106,22 @@ submitBtn.addEventListener('click', (e) => {
     e.preventDefault();
 
     // Getting username
-    const userName = document.querySelector('#user-name').value;
+    userName = document.querySelector('#user-name').value;
+
+    // if(localStorage.getItem(userName) === userName){
+    //     alert('user already exsist');
+    // }
+    foundScore = parseInt(localStorage.getItem(userName));
+    if (foundScore) {
+        localStorage.setItem(userName, foundScore);
+    }
+    else {
+        localStorage.setItem(userName, 0);
+    }
     // Getting the puzzle
     const choosenPuzzle = document.querySelector('#puzzle').value;
     // Getting the level
-    const level = document.querySelector('#level').value;
+    level = document.querySelector('#level').value;
 
     // Setting the puzzle
     puzzleFolder = allPuzzles[choosenPuzzle];
@@ -138,15 +133,66 @@ submitBtn.addEventListener('click', (e) => {
     // Setting difficulty of the game based on time, level will act as minutes
     timer(level);
 
-
+    saveData(userName);
     // Deleting the form 
     const startGame = document.querySelector('.start-game');
     startGame.remove();
 
-
+    calculateScore();
 });
 
+function calculateScore() {
+    let check = setInterval(() => {
+        const allImgs = document.querySelectorAll('.board img');
+        const ImgsPlace = []
+        let empty = false;
 
+
+        for (let i = 0; i < allImgs.length; i++) {
+
+            // extract img name from img src
+            let ImgPlace = allImgs[i].src.split('Pics/')[1].split('.jpg')[0].split('/')[1];
+            ImgsPlace[i] = parseInt(ImgPlace);
+
+            // if there are empty squares, break
+            if (isNaN(ImgsPlace[i])) {
+                empty = true;
+            }
+        }
+
+        // if there are no empty square (so maybe user completed) or time is up, compute imgs in place
+        let inRightPlace = 0;
+        if (!empty || timeIsUp) {
+            console.log('inside new');
+            for (let i = 0; i < ImgsPlace.length; i++) {
+                if (ImgsPlace[i] === (i + 1)) {
+                    inRightPlace++
+                }
+
+            }
+        }
+
+        // stop the game if user won or time is up
+        if (timeIsUp || inRightPlace === 16) {
+            //calculatesore
+            if (!timeIsUp) {
+                let levelTimeInSec = parseInt(level) === 0 ? 60 : parseInt(level) * 60;
+                score = (levelTimeInSec - timeSpentInSec) * 5;
+
+                let foundScore = parseInt(localStorage.getItem(userName));
+                console.log(foundScore);
+                if (foundScore < score) {
+                    localStorage.setItem(userName, score);
+                }
+
+            }
+
+            clearInterval(check);
+            endGameSetUp();
+        }
+
+    }, 2000);
+}
 
 // Timer based on level
 function timer(level) {
@@ -161,20 +207,21 @@ function timer(level) {
             // TODO: if user won clear the interval
             clearInterval(intervalId);
             timeIsUp = true;
+
             console.log('end game');
 
         }
         else if (seconds === 0 && minutes !== 0) {
-            seconds = 10;
+            seconds = 59;
             minutes--;
         }
         else {
             seconds--;
             minutesElement.innerText = minutes < 10 ? `0${minutes}` : minutes;
             secondsElement.innerText = seconds < 10 ? `0${seconds}` : seconds;
-            // console.log(`${minutes} : ${seconds}`);
         }
-    }, 100);
+        timeSpentInSec++;
+    }, 1000);
 }
 
 
