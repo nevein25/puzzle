@@ -31,6 +31,7 @@ document.querySelector('.submit').addEventListener('click', (e) => {
     oldHeighScore = parseInt(localStorage.getItem(userName));
     // If there is no score (user's first time), set it to 0
     if (!oldHeighScore) {
+        oldHeighScore = 0;
         localStorage.setItem(userName, 0);
     }
 
@@ -180,7 +181,7 @@ function checkForEndGame() {
             if (!timeIsUp) {
                 calculateScore();
             }
-
+            calculateScore();
             clearInterval(check);
             endGameSetUp();
         }
